@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MySchool | Responsive School Website</title>
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-soft: #eef4ff;
+    --accent: #f59e0b;
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --text-dark: #111827;
+    --text-muted: #4b5563;
+    --shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+    --radius: 24px;
+    --transition: 0.28s ease;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text-dark);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  button,
+  a {
+    font: inherit;
+  }
+
+  button {
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+
+  .header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+  }
+
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    gap: 1rem;
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--text-dark);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    text-decoration: none;
+  }
+
+  .brand strong {
+    color: var(--primary);
+  }
+
+  .nav-toggle,
+  .close-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    color: var(--text-muted);
+    transition: background var(--transition), transform var(--transition);
+  }
+
+  .nav-toggle:hover,
+  .close-btn:hover {
+    background: rgba(37, 99, 235, 0.1);
+    transform: translateY(-1px);
+  }
+
+  .sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.35);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease;
+    z-index: 95;
+  }
+
+  .sidebar-overlay.open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: min(320px, 92vw);
+    max-height: 100vh;
+    padding: 2rem 1.5rem;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: -10px 30px 50px rgba(15, 23, 42, 0.14);
+    transition: right 0.28s ease;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    overflow-y: auto;
+  }
+
+  .sidebar.open {
+    right: 0;
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .nav-links a {
+    color: var(--text-dark);
+    text-decoration: none;
+    padding: 1rem 1rem;
+    border-radius: 18px;
+    background: rgba(37, 99, 235, 0.05);
+    transition: background var(--transition), transform var(--transition);
+  }
+
+  .nav-links a:hover {
+    background: rgba(37, 99, 235, 0.12);
+    transform: translateX(4px);
+  }
+
+  main {
+    padding-top: 84px;
+  }
+
+  .hero {
+    position: relative;
+    min-height: calc(100vh - 84px);
+    display: grid;
+    place-items: center;
+    padding: 3rem 1.25rem 4rem;
+    text-align: center;
+    color: #fff;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.35), rgba(15, 23, 42, 0.35));
+    z-index: 1;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: background-image 0.6s ease-in-out;
+    background-image: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1400&q=80');
+  }
+
+  @keyframes slideChange {
+    0% { opacity: 1; }
+    100% { opacity: 1; }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .carousel-dots {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.75rem;
+    z-index: 3;
+  }
+
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+  }
+
+  .dot.active {
+    background: #fff;
+    width: 32px;
+    border-radius: 999px;
+  }
+
+  .dot:hover {
+    background: rgba(255, 255, 255, 0.7);
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    margin-bottom: 1.5rem;
+    padding: 0.85rem 1.25rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.78rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .hero-title {
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    line-height: 1.02;
+    margin: 0 0 1.25rem;
+    max-width: 10ch;
+  }
+
+  .hero-text {
+    max-width: 38rem;
+    margin: 0 auto 2rem;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 1rem;
+  }
+
+  .hero-actions {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    justify-content: center;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.95rem 1.5rem;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: transform var(--transition), box-shadow var(--transition);
+    font-weight: 700;
+  }
+
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 18px 30px rgba(37, 99, 235, 0.18);
+  }
+
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+
+  section {
+    padding: 3rem 1.25rem;
+  }
+
+  .main-container {
+    width: min(1180px, 100% - 2.5rem);
+    margin: 0 auto;
+  }
+
+  .section-head {
+    max-width: 44rem;
+    margin: 0 auto 2.5rem;
+    text-align: center;
+    display: grid;
+    gap: 1.2rem;
+  }
+
+  .section-tag {
+    color: var(--primary);
+    font-size: 0.8rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    font-weight: 700;
+    background: linear-gradient(135deg, #eef4ff 0%, transparent 100%);
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    display: inline-block;
+  }
+
+  .section-title {
+    font-size: clamp(1.95rem, 4vw, 2.8rem);
+    line-height: 1.05;
+    margin: 0;
+    background: linear-gradient(135deg, #0f172a 0%, #2563eb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .section-copy {
+    color: #64748b;
+    font-size: 1rem;
+    line-height: 1.75;
+    font-weight: 500;
+  }
+
+  .cards-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border-radius: 28px;
+    padding: 1.8rem;
+    box-shadow: var(--shadow);
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    border: 2px solid #f0f4f8;
+  }
+
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 48px rgba(37, 99, 235, 0.12);
+    border-color: #e0f2fe;
+  }
+
+  .card-title {
+    margin: 0 0 0.85rem;
+    font-size: 1.15rem;
+    line-height: 1.3;
+    color: #1e293b;
+    font-weight: 700;
+  }
+
+  .card-text {
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .card-icon {
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .card:hover .card-icon {
+    transform: scale(1.15) rotate(-5deg);
+  }
+
+  .split-grid {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .stats-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stat {
+    background: linear-gradient(135deg, #eef4ff 0%, #f0f9ff 100%);
+    border-radius: 24px;
+    padding: 1.8rem;
+    border-left: 5px solid var(--primary);
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.1);
+    transition: transform var(--transition), box-shadow var(--transition);
+  }
+
+  .stat:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(37, 99, 235, 0.15);
+  }
+
+  .stat-number {
+    font-size: 2.2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-label {
+    margin: 0;
+    color: #475569;
+    font-size: 0.93rem;
+    font-weight: 600;
+  }
+
+  .gallery-row {
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  .gallery-track {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding-bottom: 0.75rem;
+    scroll-snap-type: x mandatory;
+  }
+
+  .gallery-track::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .gallery-track::-webkit-scrollbar-thumb {
+    background: rgba(15, 23, 42, 0.18);
+    border-radius: 999px;
+  }
+
+  .gallery-card {
+    flex: 0 0 min(280px, 82vw);
+    scroll-snap-align: start;
+    background: var(--surface);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .gallery-card p {
+    margin: 0;
+    padding: 1rem;
+    color: var(--text-muted);
+    font-size: 0.96rem;
+  }
+
+  .facilities-showcase {
+    background: #f8fafc;
+    border-radius: 32px;
+    padding: 3rem 2rem;
+    margin: 1rem auto;
+  }
+
+  .facilities-grid {
+    display: grid;
+    gap: 3rem;
+    align-items: center;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .facilities-list {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .facility-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .facility-icon {
+    font-size: 2rem;
+    display: block;
+  }
+
+  .facility-item h4 {
+    margin: 0 0 0.5rem;
+    color: var(--text-dark);
+    font-weight: 700;
+  }
+
+  .facility-item p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.95rem;
+  }
+
+  .facilities-image img {
+    width: 100%;
+    border-radius: 24px;
+    box-shadow: 0 16px 48px rgba(37, 99, 235, 0.15);
+  }
+
+  .team-section {
+    padding: 4rem 1.25rem;
+  }
+
+  .team-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    margin-top: 2rem;
+  }
+
+  .team-card {
+    background: var(--surface);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform var(--transition), box-shadow var(--transition);
+    text-align: center;
+  }
+
+  .team-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 24px 48px rgba(37, 99, 235, 0.12);
+  }
+
+  .team-card img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .team-card h3 {
+    margin: 1.5rem 1.25rem 0;
+    font-size: 1.25rem;
+    color: var(--text-dark);
+  }
+
+  .team-role {
+    margin: 0.5rem 1.25rem 0;
+    font-size: 0.9rem;
+    color: var(--primary);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .team-bio {
+    margin: 0.75rem 1.25rem 1.5rem;
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .achievements-section {
+    padding: 4rem 1.25rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #f0f9ff 100%);
+    border-radius: 32px;
+    margin: 2rem auto;
+  }
+
+  .achievements-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    margin-top: 2rem;
+  }
+
+  .achievement-card {
+    background: var(--surface);
+    padding: 2rem;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.08);
+    transition: transform var(--transition), box-shadow var(--transition);
+    border: 1px solid #e0f2fe;
+  }
+
+  .achievement-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(37, 99, 235, 0.12);
+  }
+
+  .achievement-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .achievement-card h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1.15rem;
+    color: var(--text-dark);
+    font-weight: 700;
+  }
+
+  .achievement-card p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .testimonials-section {
+    padding: 4rem 1.25rem;
+  }
+
+  .testimonials-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    margin-top: 2rem;
+  }
+
+  .testimonial-card {
+    background: var(--surface);
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    transition: transform var(--transition), box-shadow var(--transition);
+    border-left: 5px solid var(--primary);
+  }
+
+  .testimonial-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 48px rgba(37, 99, 235, 0.15);
+  }
+
+  .stars {
+    display: block;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+  }
+
+  .testimonial-text {
+    margin: 0 0 1.5rem;
+    color: #475569;
+    font-size: 1rem;
+    line-height: 1.8;
+    font-style: italic;
+  }
+
+  .testimonial-author strong {
+    display: block;
+    color: var(--text-dark);
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .testimonial-author p {
+    margin: 0;
+    color: var(--primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .news-section {
+    padding: 4rem 1.25rem;
+    background: linear-gradient(135deg, #f0f9ff 0%, #f8fafc 100%);
+    border-radius: 32px;
+    margin: 2rem auto;
+  }
+
+  .news-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    margin-top: 2rem;
+  }
+
+  .news-card {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    transition: transform var(--transition), box-shadow var(--transition);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .news-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 48px rgba(37, 99, 235, 0.12);
+  }
+
+  .news-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+    color: white;
+    padding: 1rem;
+    border-radius: 12px;
+    min-width: 70px;
+    text-align: center;
+  }
+
+  .date-day {
+    font-size: 1.8rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .date-month {
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+
+  .news-content h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1.1rem;
+    color: var(--text-dark);
+    line-height: 1.4;
+  }
+
+  .news-content p {
+    margin: 0 0 1rem;
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .news-link {
+    color: var(--primary);
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color var(--transition);
+  }
+
+  .news-link:hover {
+    color: #1d4ed8;
+  }
+
+  /* Admission Form Section */
+  .admission-section {
+    padding: 4rem 1.25rem;
+    background: linear-gradient(135deg, #f0f9ff 0%, #f8fafc 100%);
+    border-radius: 32px;
+    margin: 2rem auto;
+  }
+
+  .form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: var(--surface);
+    padding: 2.5rem;
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+  }
+
+  .form-group {
+    display: grid;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+    display: block;
+  }
+
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 0.9rem 1.1rem;
+    border: 2px solid #e0e7ff;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color var(--transition), box-shadow var(--transition);
+    background: var(--surface);
+    color: var(--text-dark);
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .form-row .form-group {
+    margin-bottom: 0;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 1.1rem;
+    background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform var(--transition), box-shadow var(--transition);
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.25);
+  }
+
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(37, 99, 235, 0.35);
+  }
+
+  .submit-btn:active {
+    transform: translateY(0);
+  }
+
+  .form-message {
+    padding: 1rem;
+    border-radius: 12px;
+    margin-top: 1rem;
+    font-weight: 600;
+    display: none;
+    text-align: center;
+  }
+
+  .form-message.success {
+    background: #dbeafe;
+    color: #0c4a6e;
+    display: block;
+  }
+
+  .form-message.error {
+    background: #fee2e2;
+    color: #7f1d1d;
+    display: block;
+  }
+
+  /* Google Map Section */
+  .map-section {
+    padding: 4rem 1.25rem;
+  }
+
+  .map-container {
+    max-width: 1180px;
+    margin: 0 auto;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    height: 450px;
+  }
+
+  .map-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  /* Social Media Icons */
+  .social-links {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .social-links a {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.1);
+    border-radius: 50%;
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 1.2rem;
+    transition: background var(--transition), transform var(--transition);
+  }
+
+  .social-links a:hover {
+    background: var(--primary);
+    color: white;
+    transform: scale(1.15);
+  }
+
+  .footer {
+    background: #0f172a;
+    color: #cbd5e1;
+    padding: 3rem 1.25rem 2rem;
+  }
+
+  .footer-grid {
+    display: grid;
+    gap: 1.5rem;
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  .footer-brand {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .footer-links {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+
+  .footer-links h3 {
+    margin: 0 0 0.75rem;
+    color: #fff;
+    font-size: 1rem;
+  }
+
+  .footer-links a {
+    color: #cbd5e1;
+    text-decoration: none;
+    display: block;
+    line-height: 1.8;
+    transition: color var(--transition);
+  }
+
+  .footer-links a:hover {
+    color: var(--primary);
+  }
+
+  .footer-social {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .footer-social h3 {
+    margin: 0 0 1rem;
+    color: #fff;
+    font-size: 0.95rem;
+  }
+
+  .footer-note {
+
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.94rem;
+    margin-top: 2rem;
+  }
+
+  @media (min-width: 640px) {
+    .navbar {
+      padding: 1rem 2rem;
+    }
+
+    .hero {
+      padding-top: 120px;
+    }
+
+    .cards-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .footer-grid {
+      grid-template-columns: 1.4fr 1fr;
+    }
+
+    .facilities-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .achievements-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .news-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .news-card {
+      grid-template-columns: auto 1fr;
+    }
+
+    .form-row {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .map-container {
+      height: 500px;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .hero {
+      padding-top: 140px;
+    }
+
+    .cards-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .split-grid {
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 3rem;
+    }
+
+    .footer-grid {
+      grid-template-columns: 1.3fr repeat(3, minmax(180px, 1fr));
+    }
+
+    .achievements-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .team-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .testimonials-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .facilities-grid {
+      grid-template-columns: 1.2fr 1fr;
+    }
+
+    .news-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .news-card {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 780px) {
+    .sidebar {
+      width: 100%;
+    }
+
+    .section {
+      padding: 2.4rem 1rem;
+    }
+
+    .section-head {
+      max-width: 100%;
+    }
+
+    .cards-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .footer-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .facilities-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .achievements-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .team-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .testimonials-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .news-card {
+      grid-template-columns: auto 1fr;
+    }
+
+    .news-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .form-container {
+      padding: 2rem 1.5rem;
+    }
+
+    .map-container {
+      height: 350px;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .nav-toggle,
+    .close-btn {
+      width: 40px;
+      height: 40px;
+    }
+
+    .hero {
+      padding: 96px 0 3rem;
+    }
+
+    .hero-text {
+      font-size: 0.95rem;
+    }
+
+    .section {
+      padding: 2rem 0.85rem;
+    }
+
+    .footer {
+      padding: 2.5rem 0.85rem 1.5rem;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="navbar">
+    <a href="#hero" class="brand"><strong>My</strong>School</a>
+    <button class="nav-toggle" id="menuBtn" aria-label="Open navigation menu">☰</button>
+  </div>
+</div>
+<div class="sidebar-overlay" id="overlay"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="#hero" class="brand"><strong>My</strong>School</a>
+    <button class="close-btn" id="closeBtn" aria-label="Close navigation menu">✕</button>
+  </div>
+  <nav class="nav-links">
+    <a href="#hero">Home</a>
+    <a href="#about">About</a>
+    <a href="#academics">Academics</a>
+    <a href="#gallery-section">Gallery</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</aside>
+<main>
+  <section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <span class="hero-badge">Established 1998 · Modern Campus</span>
+      <h1 class="hero-title">A responsive school website built for parents, students, and staff.</h1>
+      <p class="hero-text">Fast loading, mobile-first, and modern by design — this template adapts smoothly from phones to large desktop screens without horizontal overflow.</p>
+      <div class="hero-actions">
+        <a href="#about" class="btn btn-secondary">Learn More</a>
+        <a href="#academics" class="btn btn-primary">View Programs</a>
+      </div>
+    </div>
+    <div class="carousel-dots">
+      <button class="dot active" data-slide="0" aria-label="Slide 1"></button>
+      <button class="dot" data-slide="1" aria-label="Slide 2"></button>
+      <button class="dot" data-slide="2" aria-label="Slide 3"></button>
+    </div>
+  </section>
+
+  <section class="main-container">
+    <div class="section-head">
+      <span class="section-tag">Why Choose Us</span>
+      <h2 class="section-title">A calm, modern experience for every visitor.</h2>
+      <p class="section-copy">From engaged classrooms to flexible learning spaces, our responsive layout ensures every visitor can explore your school easily on any device.</p>
+    </div>
+    <div class="cards-grid">
+      <article class="card">
+        <span class="card-icon">📱</span>
+        <h3 class="card-title">Mobile-first design</h3>
+        <p class="card-text">Optimized for small screens first, then enhanced for tablets and desktops with clean breakpoints and responsive spacing.</p>
+      </article>
+      <article class="card">
+        <span class="card-icon">⚡</span>
+        <h3 class="card-title">Fast-loading content</h3>
+        <p class="card-text">Lightweight markup, responsive images, and minimal JavaScript keep performance strong for all visitors.</p>
+      </article>
+      <article class="card">
+        <span class="card-icon">🧭</span>
+        <h3 class="card-title">Friendly navigation</h3>
+        <p class="card-text">A compact hamburger menu on mobile and clear anchor links on larger screens make the site easy to browse.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="split-grid main-container" id="about">
+    <div>
+      <div class="section-head">
+        <span class="section-tag">About MySchool</span>
+        <h2 class="section-title">A welcoming campus with modern learning spaces.</h2>
+        <p class="section-copy">Our curriculum balances academic excellence with social and emotional growth, supported by teachers, technology, and a safe community.</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat">
+          <div class="stat-number">4,200+</div>
+          <p class="stat-label">Students enrolled</p>
+        </div>
+        <div class="stat">
+          <div class="stat-number">320+</div>
+          <p class="stat-label">Faculty members</p>
+        </div>
+        <div class="stat">
+          <div class="stat-number">98%</div>
+          <p class="stat-label">Graduation rate</p>
+        </div>
+        <div class="stat">
+          <div class="stat-number">25+</div>
+          <p class="stat-label">Years of service</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <img src="https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&w=900&q=80" alt="School campus view" />
+    </div>
+  </section>
+
+  <section class="main-container" id="academics">
+    <div class="section-head">
+      <span class="section-tag">Academic Programs</span>
+      <h2 class="section-title">Programs for every learner.</h2>
+      <p class="section-copy">From science and arts to sports and leadership, our programs are designed to build confidence, curiosity, and achievement in every student.</p>
+    </div>
+    <div class="cards-grid">
+      <article class="card">
+        <span class="card-icon">🔬</span>
+        <h3 class="card-title">Science & Technology</h3>
+        <p class="card-text">Hands-on labs, STEM challenges, and digital tools create a modern learning environment where students explore physics, chemistry, biology, and computer science with cutting-edge equipment and experienced instructors.</p>
+      </article>
+      <article class="card">
+        <span class="card-icon">📚</span>
+        <h3 class="card-title">Liberal Arts</h3>
+        <p class="card-text">Literature, history, and social studies nurture critical thinking and communication. Our comprehensive curriculum develops analytical skills and encourages students to engage with diverse perspectives and cultural heritage.</p>
+      </article>
+      <article class="card">
+        <span class="card-icon">🎨</span>
+        <h3 class="card-title">Arts & Culture</h3>
+        <p class="card-text">Music, visual arts, and performance activities help students express creativity confidently. From theater productions to art exhibitions, we foster artistic excellence and self-expression.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="facilities-showcase main-container">
+    <div class="facilities-grid">
+      <div class="facilities-content">
+        <span class="section-tag">Campus Facilities</span>
+        <h2 class="section-title">State-of-the-art infrastructure for enhanced learning.</h2>
+        <p class="section-copy">Our campus features modern facilities designed to support academic excellence, physical development, and overall student well-being. From advanced laboratories to comfortable learning spaces, every infrastructure element is thoughtfully designed.</p>
+        <div class="facilities-list">
+          <div class="facility-item">
+            <span class="facility-icon">🏫</span>
+            <div>
+              <h4>Modern Classrooms</h4>
+              <p>Equipped with interactive whiteboards, smart projectors, and high-speed internet connectivity for collaborative learning experiences.</p>
+            </div>
+          </div>
+          <div class="facility-item">
+            <span class="facility-icon">📖</span>
+            <div>
+              <h4>Digital Library</h4>
+              <p>A comprehensive collection of physical and digital resources providing access to thousands of books, journals, databases, and online learning platforms.</p>
+            </div>
+          </div>
+          <div class="facility-item">
+            <span class="facility-icon">⚽</span>
+            <div>
+              <h4>Sports Complex</h4>
+              <p>Complete facilities including cricket field, basketball court, tennis courts, swimming pool, and a fully equipped gymnasium for multiple sports.</p>
+            </div>
+          </div>
+          <div class="facility-item">
+            <span class="facility-icon">🍽️</span>
+            <div>
+              <h4>Cafeteria</h4>
+              <p>Nutritious meals prepared by professional chefs using fresh, organic ingredients. Accommodates dietary preferences and allergies.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="facilities-image">
+        <img src="https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=600&q=80" alt="Campus facilities" />
+      </div>
+    </div>
+  </section>
+
+  <section class="team-section main-container">
+    <div class="section-head">
+      <span class="section-tag">Leadership & Faculty</span>
+      <h2 class="section-title">Meet our exceptional educators.</h2>
+      <p class="section-copy">Our faculty comprises experienced professionals dedicated to nurturing students' academic growth and personal development through innovative teaching methodologies.</p>
+    </div>
+    <div class="team-grid">
+      <div class="team-card">
+        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&q=80" alt="Principal" />
+        <h3>Dr. Rajesh Kumar</h3>
+        <p class="team-role">Principal & Founder</p>
+        <p class="team-bio">With 20+ years of experience in education, Dr. Kumar has transformed the school into a beacon of academic excellence and holistic development.</p>
+      </div>
+      <div class="team-card">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80" alt="Vice Principal" />
+        <h3>Ms. Priya Sharma</h3>
+        <p class="team-role">Vice Principal - Academics</p>
+        <p class="team-bio">Leading our academic initiatives and curriculum development, Priya brings innovative teaching approaches and a passion for student success.</p>
+      </div>
+      <div class="team-card">
+        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=400&q=80" alt="Dean of Students" />
+        <h3>Mr. Arjun Singh</h3>
+        <p class="team-role">Dean of Students</p>
+        <p class="team-bio">Dedicated to student welfare and extracurricular development, Arjun ensures a nurturing and supportive campus environment.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery-row" id="gallery-section">
+    <div class="main-container section-head">
+      <span class="section-tag">Gallery</span>
+      <h2 class="section-title">Every day feels engaging.</h2>
+      <p class="section-copy">Browse snapshots of campus life, learning moments, and school spirit capturing the vibrant and dynamic environment of our institution.</p>
+    </div>
+    <div class="gallery-track">
+      <article class="gallery-card">
+        <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=600&q=80" alt="Students in classroom" />
+        <p>Interactive classrooms with hands-on student projects and collaborative learning sessions.</p>
+      </article>
+      <article class="gallery-card">
+        <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80" alt="School library" />
+        <p>A bright, modern library space designed for reading, research, and quiet study.</p>
+      </article>
+      <article class="gallery-card">
+        <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=600&q=80" alt="Sports activities" />
+        <p>Active sports programs and after-school clubs promoting physical wellness and teamwork.</p>
+      </article>
+      <article class="gallery-card">
+        <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80" alt="Assembly event" />
+        <p>School assemblies and cultural events celebrating student achievements and diversity.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="achievements-section main-container">
+    <div class="section-head">
+      <span class="section-tag">Our Achievements</span>
+      <h2 class="section-title">Recognition of excellence and commitment.</h2>
+      <p class="section-copy">Our students and faculty have earned numerous accolades and certifications, reflecting our dedication to academic excellence and holistic development.</p>
+    </div>
+    <div class="achievements-grid">
+      <div class="achievement-card">
+        <div class="achievement-icon">🏆</div>
+        <h3>National Award Winner</h3>
+        <p>Recognized as Best School in Science & Technology 2024 by National Education Council for innovative STEM programs and research initiatives.</p>
+      </div>
+      <div class="achievement-card">
+        <div class="achievement-icon">📜</div>
+        <h3>ISO Certified</h3>
+        <p>ISO 9001:2015 certified for quality management systems ensuring consistent delivery of educational excellence and operational standards.</p>
+      </div>
+      <div class="achievement-card">
+        <div class="achievement-icon">🌍</div>
+        <h3>International Recognition</h3>
+        <p>Member of International Schools Association with partnerships in 45+ countries promoting global learning and cultural exchange programs.</p>
+      </div>
+      <div class="achievement-card">
+        <div class="achievement-icon">🎓</div>
+        <h3>100% University Admission</h3>
+        <p>All graduating students successfully admitted to top universities including IIT, IISER, and international institutions worldwide.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonials-section main-container">
+    <div class="section-head">
+      <span class="section-tag">What People Say</span>
+      <h2 class="section-title">Voices from our community.</h2>
+      <p class="section-copy">Parents, students, and alumni share their experiences and the impact of our school on their personal and academic growth journey.</p>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="testimonial-text">"MySchool transformed my child's perspective on learning. The teachers are dedicated, the facilities are world-class, and most importantly, my child feels happy coming to school every day."</p>
+        <div class="testimonial-author">
+          <strong>Meera Patel</strong>
+          <p>Parent, Grade 8</p>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="testimonial-text">"The school's focus on both academics and extracurriculars gave me the confidence to pursue my dreams. I'm now studying Computer Science at IIT Delhi!"</p>
+        <div class="testimonial-author">
+          <strong>Aryan Malik</strong>
+          <p>Alumni, Batch 2024</p>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="testimonial-text">"As a teacher, I appreciate the collaborative environment and the emphasis on innovative pedagogy. The school truly cares about student development."</p>
+        <div class="testimonial-author">
+          <strong>Dr. Anita Sharma</strong>
+          <p>Faculty, Science Department</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="news-section main-container">
+    <div class="section-head">
+      <span class="section-tag">Latest Updates</span>
+      <h2 class="section-title">News and announcements from campus.</h2>
+      <p class="section-copy">Stay informed about important events, achievements, and updates from our school community with regular news and announcements.</p>
+    </div>
+    <div class="news-grid">
+      <article class="news-card">
+        <div class="news-date">
+          <span class="date-day">24</span>
+          <span class="date-month">Apr</span>
+        </div>
+        <div class="news-content">
+          <h3>Annual Science Fair 2024 Concludes Successfully</h3>
+          <p>Over 150 students showcased innovative science projects demonstrating remarkable research and creativity. Winners received certificates and prizes for their exceptional contributions.</p>
+          <a href="#" class="news-link">Read More →</a>
+        </div>
+      </article>
+      <article class="news-card">
+        <div class="news-date">
+          <span class="date-day">18</span>
+          <span class="date-month">Apr</span>
+        </div>
+        <div class="news-content">
+          <h3>Sports Day Celebration: Students Excel in Multiple Events</h3>
+          <p>The annual sports day witnessed fierce competition across cricket, basketball, athletics, and various other sports. Congratulations to all participants and winning houses!</p>
+          <a href="#" class="news-link">Read More →</a>
+        </div>
+      </article>
+      <article class="news-card">
+        <div class="news-date">
+          <span class="date-day">12</span>
+          <span class="date-month">Apr</span>
+        </div>
+        <div class="news-content">
+          <h3>Faculty Workshop on Modern Teaching Methodologies</h3>
+          <p>Our teaching staff participated in a comprehensive workshop focused on innovative pedagogical approaches and integration of technology in classroom teaching.</p>
+          <a href="#" class="news-link">Read More →</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="footer" id="contact">
+    <div class="footer-grid main-container">
+      <div class="footer-brand">
+        <a href="#hero" class="brand"><strong>My</strong>School</a>
+        <p>Modern school website design with a focus on responsive layouts, accessible navigation, and clean mobile-first presentation.</p>
+      </div>
+      <div class="footer-links">
+        <div>
+          <h3>Site links</h3>
+          <a href="#hero">Home</a>
+          <a href="#about">About</a>
+          <a href="#academics">Programs</a>
+        </div>
+        <div>
+          <h3>Contact</h3>
+          <a href="mailto:info@myschool.edu">✉ info@myschool.edu</a>
+          <a href="tel:+919876543210">📞 +91 98765 43210</a>
+          <a href="#">📍 123 Education Lane</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-note">© 2025 MySchool. Built for fast, modern learning experiences.</div>
+  </section>
+</main>
+<script>
+  const menuBtn = document.getElementById('menuBtn');
+  const closeBtn = document.getElementById('closeBtn');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  const body = document.body;
+
+  const toggleSidebar = open => {
+    sidebar.classList.toggle('open', open);
+    overlay.classList.toggle('open', open);
+    body.style.overflow = open ? 'hidden' : '';
+  };
+
+  menuBtn.addEventListener('click', () => toggleSidebar(true));
+  closeBtn.addEventListener('click', () => toggleSidebar(false));
+  overlay.addEventListener('click', () => toggleSidebar(false));
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') toggleSidebar(false);
+  });
+
+  // Carousel dots functionality
+  const dots = document.querySelectorAll('.dot');
+  const heroBg = document.querySelector('.hero-bg');
+  const slideImages = [
+    'url("https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1400&q=80")',
+    'url("https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1400&q=80")',
+    'url("https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1400&q=80")'
+  ];
+
+  let currentSlide = 0;
+
+  function updateCarousel(slideIndex) {
+    currentSlide = slideIndex % slideImages.length;
+    dots.forEach((dot, index) => {
+      dot.classList.toggle('active', index === currentSlide);
+    });
+    heroBg.style.backgroundImage = slideImages[currentSlide];
+  }
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      const slideIndex = parseInt(dot.getAttribute('data-slide'));
+      updateCarousel(slideIndex);
+      clearInterval(carouselTimer);
+      startCarouselTimer();
+    });
+  });
+
+  function startCarouselTimer() {
+    carouselTimer = setInterval(() => {
+      updateCarousel(currentSlide + 1);
+    }, 4000);
+  }
+
+  let carouselTimer = setInterval(() => {
+    updateCarousel(currentSlide + 1);
+  }, 4000);
+</script>
+</body>
+</html>
