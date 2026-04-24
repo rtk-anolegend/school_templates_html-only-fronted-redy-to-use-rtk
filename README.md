@@ -1,2 +1,21 @@
-# school_templates_html-only-fronted-redy-to-use-rtk
-A clean and modern school website frontend template designed using HTML, CSS, and JavaScript. This open-source project is fully responsive, mobile-friendly, and easy to customize for schools, colleges, and educational institutions. Includes homepage, about section, admission form, and contact UI.
+# School Website Frontend Template
+
+A modern and responsive school website frontend template built using HTML, CSS, and JavaScript.
+
+## Features
+- Fully responsive (mobile-friendly 📱)
+- Clean and modern UI
+- Homepage, About, Contact sections
+- Admission form UI
+- Easy to customize
+
+## Tech Stack
+- HTML5
+- CSS3
+- JavaScript
+
+## Usage
+You can directly use this template for school, college, or any educational website.
+
+## License
+Open-source and free to use.
